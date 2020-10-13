@@ -68,6 +68,7 @@ static void clear(vector* v)
     } else {
 	for (size_t i = 0; i < v->size; ++i) {
 	    free(v->data[i]);
+        v->data[i] = NULL;
 	}
 	free(v->data);
     }
@@ -106,6 +107,10 @@ static void pop_back(vector* v)
 static void init_vec(vector* vec)
 {
     vec->data = malloc(2 * sizeof(void*));
+    if (v->data == NULL) {
+	    puts("memory allocation is failed!");
+	    return;
+	}
     vec->size = 0;
     vec->capacity = 2;
     vec->push_back = push_back;
