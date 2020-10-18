@@ -1,4 +1,3 @@
-#pragma once
 
 /*
  * header only simple map implementation in C
@@ -182,160 +181,153 @@
  *
  */
 
+#ifndef _MAP_H_
+#define _MAP_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define heap_char(t, x)                                                       \
-  char *(t) = malloc (strlen ((x)) + 1);                                      \
-  strncpy ((t), (x), (strlen ((x))) + 1)
+#define heap_char(t, x)               \
+  char*(t) = malloc(strlen((x)) + 1); \
+  strncpy((t), (x), (strlen((x))) + 1)
 
-#define create_pair(x, y, z)                                                  \
-  pair *(x) = malloc (sizeof (pair));                                         \
-  (x)->key = (void *)(y);                                                     \
-  (x)->value = (void *)(z)
+#define create_pair(x, y, z)       \
+  pair*(x) = malloc(sizeof(pair)); \
+  (x)->key = (void*)(y);           \
+  (x)->value = (void*)(z)
 
-#define create_pair_char(pair, key, str, value)                               \
-  heap_char ((key), (str));                                                   \
-  create_pair ((pair), (key), (value))
+#define create_pair_char(pair, key, str, value) \
+  heap_char((key), (str));                      \
+  create_pair((pair), (key), (value))
 
-#define initMap_s(x)                                                          \
-  map x = { .memberType = 's' };                                              \
-  init_map (&x)
+#define initMap_s(x)             \
+  map x = { .memberType = 's' }; \
+  init_map(&x)
 
-#define initMap_h(x)                                                          \
-  map *x = malloc (sizeof (map));                                             \
-  x->memberType = 'h';                                                        \
-  init_map (x)
+#define initMap_h(x)            \
+  map* x = malloc(sizeof(map)); \
+  x->memberType = 'h';          \
+  init_map(x)
+
+#define INTERNAL
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct
 {
-  void *key;
-  void *value;
+  void* key;
+  void* value;
 } pair;
 
 typedef struct map map;
 
-struct map
-{
+struct map {
   size_t size;
   size_t capacity;
-  pair **pairs;
+  pair** pairs;
   char memberType;
-  void (*mpush_back) (map *, pair *);
-  void (*mpop_back) (map *);
-  void (*mclear) (map *);
-  void (*mdeleteAt) (map *, size_t);
-  void *(*mfind_by_string_key) (map *, void *);
+  void (*mpush_back)(map*, pair*);
+  void (*mpop_back)(map*);
+  void (*mclear)(map*);
+  void (*mdeleteAt)(map*, size_t);
+  void* (*mfind_by_string_key)(map*, void*);
 };
 
-static void *
-mfind_by_string_key (map *m, void *key)
+static void*
+mfind_by_string_key(map* m, void* key)
 {
   for (ssize_t i = 0; i < m->size; ++i)
-    if (memcmp ((void*)key, m->pairs[i]->key, strlen ((char *)key)) == 0)
+    if (memcmp((void*)key, m->pairs[i]->key, strlen((char*)key)) == 0)
       return m->pairs[i]->value;
   return NULL;
 }
 
 static void
-mdeleteAt (map *m, size_t index)
+mdeleteAt(map* m, size_t index)
 {
   int i = 0;
-  if (m)
-    {
-      if ((index < 0) || (index >= m->size))
-        return;
-      if (m->memberType == 's')
-        {
-          m->pairs[index]->key = NULL;
-          m->pairs[index]->value = NULL;
-          m->pairs[index] = NULL;
-        }
-      else
-        {
-          free (m->pairs[index]->key);
-          m->pairs[index]->key = NULL;
-          free (m->pairs[index]->value);
-          m->pairs[index]->value = NULL;
-          free (m->pairs[index]);
-          m->pairs[index] = NULL;
-        }
-      for (i = index; i < (m->size - 1); ++i)
-        {
-          m->pairs[i] = m->pairs[i + 1];
-          m->pairs[i + 1] = NULL;
-        }
-      m->size--;
-      if ((m->size > 0) && ((m->size) == (m->capacity / 4)))
-        {
-          m->capacity /= 2;
-          m->pairs = realloc (m->pairs, sizeof (pair *) * m->capacity);
-          if (m->pairs == NULL)
-            {
-              puts ("memory allocation failed!");
-              return;
-            }
-        }
+  if (m) {
+    if ((index < 0) || (index >= m->size))
+      return;
+    if (m->memberType == 's') {
+      m->pairs[index]->key = NULL;
+      m->pairs[index]->value = NULL;
+      m->pairs[index] = NULL;
+    } else {
+      free(m->pairs[index]->key);
+      m->pairs[index]->key = NULL;
+      free(m->pairs[index]->value);
+      m->pairs[index]->value = NULL;
+      free(m->pairs[index]);
+      m->pairs[index] = NULL;
     }
+    for (i = index; i < (m->size - 1); ++i) {
+      m->pairs[i] = m->pairs[i + 1];
+      m->pairs[i + 1] = NULL;
+    }
+    m->size--;
+    if ((m->size > 0) && ((m->size) == (m->capacity / 4))) {
+      m->capacity /= 2;
+      m->pairs = realloc(m->pairs, sizeof(pair*) * m->capacity);
+      if (m->pairs == NULL) {
+        puts("memory allocation failed!");
+        return;
+      }
+    }
+  }
 }
 
 static void
-mclear (map *m)
+mclear(map* m)
 {
-  if (m->memberType == 's')
-    {
-      free (m->pairs);
+  if (m->memberType == 's') {
+    free(m->pairs);
+  } else {
+    for (size_t i = 0; i < m->size; ++i) {
+      free(m->pairs[i]->key);
+      m->pairs[i]->key = NULL;
+      free(m->pairs[i]->value);
+      m->pairs[i]->value = NULL;
+      free(m->pairs[i]);
+      m->pairs[i] = NULL;
     }
-  else
-    {
-      for (size_t i = 0; i < m->size; ++i)
-        {
-          free (m->pairs[i]->key);
-          m->pairs[i]->key = NULL;
-          free (m->pairs[i]->value);
-          m->pairs[i]->value = NULL;
-          free (m->pairs[i]);
-          m->pairs[i] = NULL;
-        }
-      free (m->pairs);
-    }
+    free(m->pairs);
+  }
   m->pairs = NULL;
   m->size = 0;
 }
 
 static void
-mpush_back (map *m, pair *p)
+mpush_back(map* m, pair* p)
 {
-  if (m->size < m->capacity)
-    {
-      m->pairs[m->size] = p;
-      m->size++;
+  if (m->size < m->capacity) {
+    m->pairs[m->size] = p;
+    m->size++;
+  } else {
+    m->capacity *= 2;
+    m->pairs = realloc(m->pairs, sizeof(pair*) * m->capacity);
+    if (m->pairs == NULL) {
+      puts("memory allocation failed!");
+      return;
     }
-  else
-    {
-      m->capacity *= 2;
-      m->pairs = realloc (m->pairs, sizeof (pair *) * m->capacity);
-      if (m->pairs == NULL)
-        {
-          puts ("memory allocation failed!");
-          return;
-        }
-      m->pairs[m->size] = p;
-      m->size++;
-    }
+    m->pairs[m->size] = p;
+    m->size++;
+  }
 }
 
 static void
-mpop_back (map *m)
+mpop_back(map* m)
 {
-  m->mdeleteAt (m, m->size - 1);
+  m->mdeleteAt(m, m->size - 1);
 }
 
-static void
-init_map (map *m) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initMap_s(variable_name) or initMap_h(variable_name) MACROS */
+INTERNAL static void
+init_map(map* m) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initMap_s(variable_name) or initMap_h(variable_name) MACROS */
 {
-  m->pairs = malloc (2 * sizeof (pair *));
+  m->pairs = malloc(2 * sizeof(pair*));
   m->size = 0;
   m->capacity = 2;
   m->mpush_back = mpush_back;
@@ -344,3 +336,9 @@ init_map (map *m) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initMap_s(variable
   m->mclear = mclear;
   m->mfind_by_string_key = mfind_by_string_key;
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _MAP_H_ */

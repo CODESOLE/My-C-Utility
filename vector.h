@@ -1,4 +1,3 @@
-#pragma once
 
 /*
  * header only simple vector implementation in C
@@ -129,6 +128,9 @@
  *
  */
 
+#ifndef _VECTOR_H_
+#define _VECTOR_H_
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -140,6 +142,12 @@
   vector* x = malloc(sizeof(vector)); \
   x->memberType = 'h';                \
   init_vec(x)
+
+#define INTERNAL
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct vector vector;
 
@@ -222,7 +230,7 @@ vpop_back(vector* v)
   v->vdeleteAt(v, v->size - 1);
 }
 
-static void
+INTERNAL static void
 init_vec(vector* vec) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initVec_s(variable_name) or initVec_h(variable_name) MACROS */
 {
   vec->data = malloc(2 * sizeof(void*));
@@ -233,3 +241,9 @@ init_vec(vector* vec) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initVec_s(vari
   vec->vdeleteAt = vdeleteAt;
   vec->vclear = vclear;
 }
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* _VECTOR_H_ */
