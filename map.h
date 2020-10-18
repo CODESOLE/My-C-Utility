@@ -43,12 +43,16 @@
  *  Functions:
  *   * mpush_back(map_variable_name, pair) ==> returns nothing, adds pair
  *     end of the map.
+ *
  *   * mpop_back(map_variable_name) ==> returns nothing, removes pair
  *     end of the map
+ *
  *   * mclear(map_variable_name) ==> returns nothing, removes all of the
  *     entries from the map.
+ *
  *   * mdeleteAt(map_variable_name, index) ==> returns nothing, removes
  *     element at specified index.
+ *
  *   * mfind_by_string_key(map_variable_name, key_string) ==> returns void*
  *     if it finds match with the key, returns value of corresponding value,
  *     if not, returns NULL.
@@ -60,6 +64,16 @@
  *  and add with:
  *
  *  map_name.mpush_back(&map_name, p1);
+ *
+ *  For heap map ypu can create { string key, value } pairs with:
+ *
+ *  create_pair_char(pair_name, key_name, key_string, value_name);
+ *
+ *  and add with:
+ *
+ *  map_name->mpush_back(map_name, pair_name); // Pay attention to
+ *  first argument for heap map pass directly map_name(because pointer),
+ *  for stack map pass map_name adress with '&map_name' !
  *
  *  -----------------------------------------------------------------
  *                           SAMPLE CODE
