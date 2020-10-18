@@ -28,16 +28,10 @@
  *  For key value pair actually pair struct consist of 2 void*
  *  which is generic data pointer, you can create any key,  value pair.
  *  However for string key and generic value pair there are pre-defined
- *  macros which are:
- *
- *   * heap_char(variable_name, const char*) ==> creates string on heap
+ *  macro which is:
  *   
- *   * create_pair(pair_name, key_string, value) ==> creates {string, value}
- *     pair on heap.
- *   
- *   * create_pair_char(pair_name, key, string, value) ==> combination of
- *     both heap_char and create_pair macros to create pair in one line on
- *     heap.
+ *   * create_pair_with_strig_key(pair_name, str, val) ==> creates pair with
+ *   {string, value}
  *
  *  Functions:
  *   * mpush_back(map_variable_name, pair) ==> returns nothing, adds pair
@@ -64,9 +58,9 @@
  *
  *  map_name.mpush_back(&map_name, p1);
  *
- *  For heap map ypu can create { string key, value } pairs with:
+ *  For heap map you can create { string key, value } pairs with:
  *
- *  create_pair_char(pair_name, key_name, key_string, value_name);
+ *  create_pair_with_strig_key(pair_name, str, val);
  *
  *  and add with:
  *
@@ -97,9 +91,9 @@
  *    w3->a = 8;
  *    w3->name = "hagrid";
  *    initMap_h (m); // dynamically created map
- *    create_pair_char (p1, k1, "the lord of the rings", q1); // creation of pairs
- *    create_pair_char (p2, k2, "matrix", e2);                // creation of pairs
- *    create_pair_char (p3, k3, "harry potter", w3);          // creation of pairs
+ *    create_pair_with_strig_key (p1, "the lord of the rings", q1); // creation of pairs
+ *    create_pair_with_strig_key (p2, "matrix", e2);                // creation of pairs
+ *    create_pair_with_strig_key (p3, "harry potter", w3);          // creation of pairs
  *    m->mpush_back (m, p1);  // Add pairs to map
  *    m->mpush_back (m, p2);  // Add pairs to map
  *    m->mpush_back (m, p3);  // Add pairs to map
@@ -188,18 +182,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define heap_char(t, x)               \
-  char*(t) = malloc(strlen((x)) + 1); \
-  strncpy((t), (x), (strlen((x))) + 1)
-
-#define create_pair(x, y, z)       \
-  pair*(x) = malloc(sizeof(pair)); \
-  (x)->key = (void*)(y);           \
-  (x)->value = (void*)(z)
-
-#define create_pair_char(pair, key, str, value) \
-  heap_char((key), (str));                      \
-  create_pair((pair), (key), (value))
+#define create_pair_with_strig_key(pair_name, str, val)                       \
+  pair *(pair_name) = malloc (sizeof (pair));                                 \
+  (pair_name)->key = (void *)strdup ((str));                                  \
+  (pair_name)->value = (void *)(val)
 
 #define initMap_s(x)             \
   map x = { .memberType = 's' }; \
