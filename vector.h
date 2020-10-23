@@ -61,6 +61,9 @@
  *
  *  * destroy_vector(vector_name) ==> returns nothing, frees vector container
  *
+ *  * vreplace_element(vector_name, index, data) ==> returns nothing, replaces
+ *    data at specified index.
+ *
  * ---------------------------------------------------------------------------
  *                          SAMPLE CODE
  * ---------------------------------------------------------------------------
@@ -353,6 +356,21 @@ extern "C"
         v->data[v->size] = d;
         v->size++;
       }
+  }
+
+  static void
+  vreplace_element (vector *v, size_t index, void *d)
+  {
+    if (index >= v->size || d == NULL)
+      return;
+    if (v->memberType == 's')
+      v->data[index] = d;
+    else
+    {
+      free(v->data[index]);
+      v->data[index] = NULL;
+      v->data[index] = d;
+    }
   }
 
   static void

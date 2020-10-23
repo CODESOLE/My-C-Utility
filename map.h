@@ -257,7 +257,7 @@ mdeleteAt(map* m, size_t index)
     m->size--;
     if ((m->size > 0) && ((m->size) == (m->capacity / 4))) {
       m->capacity /= 2;
-      m->pairs = realloc(m->pairs, sizeof(pair*) * m->capacity);
+      m->pairs = (pair **)realloc(m->pairs, sizeof(pair*) * m->capacity);
       if (m->pairs == NULL) {
         puts("memory allocation failed!");
         return;
@@ -294,7 +294,7 @@ mpush_back(map* m, pair* p)
     m->size++;
   } else {
     m->capacity *= 2;
-    m->pairs = realloc(m->pairs, sizeof(pair*) * m->capacity);
+    m->pairs = (pair **)realloc(m->pairs, sizeof(pair*) * m->capacity);
     if (m->pairs == NULL) {
       puts("memory allocation failed!");
       return;
@@ -313,7 +313,7 @@ mpop_back(map* m)
 INTERNAL static void
 init_map(map* m) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initMap_s(variable_name) or initMap_h(variable_name) MACROS */
 {
-  m->pairs = malloc(2 * sizeof(pair*));
+  m->pairs = (pair **)malloc(2 * sizeof(pair*));
   m->size = 0;
   m->capacity = 2;
   m->mpush_back = mpush_back;
