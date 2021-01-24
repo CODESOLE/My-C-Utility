@@ -1,3 +1,6 @@
+
+
+
 #ifndef _CVECTOR_H_
 #define _CVECTOR_H_
 
@@ -16,7 +19,10 @@ extern "C" {
       }\
     else\
       {\
-        (vec)->capacity *= 2;\
+        if ((vec)->capacity == 0)\
+          (vec)->capacity = ((vec)->capacity + 1) * 2;\
+        else\
+          (vec)->capacity *= 2;\
         (vec)->data = realloc ((vec)->data, sizeof(void *) * (vec)->capacity);\
         if ((vec)->data == NULL)\
           {\
@@ -59,6 +65,28 @@ do\
 {\
   vdeleteAt(vec, (vec)->size - 1);\
 } while(0)
+
+#define vclear(vec)\
+do{\
+  free ((vec)->data);\
+  (vec)->data = NULL;\
+  (vec)->size = 0;\
+  (vec)->capacity = 0;\
+} while(0);
+
+#define vector_free(vec)\
+do\
+{\
+  vclear ((vec));\
+} while(0);
+
+#define vreplace_element(vec, index, d)\
+do{\
+    if ((index >= (vec)->size) || d == NULL)\
+      break;\
+    (vec)->data[index] = d;\
+  } while(0)
+
 
 #ifdef __cplusplus
 }
