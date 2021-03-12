@@ -21,13 +21,21 @@
  *                             USAGE
  * -----------------------------------------------------------------
  *
- *  There are two macro defined which are first one for stack frame;
- *  initMap_s (variable_name) ==> _s for stack
- *  initMap_h (variable_name) ==> _h for heap
+ *  map creation can be with;
+ *
+ *  map* map_name = init_map(<memberType>)
+ *
+ *  memberType is a enum which is 2 possible values;
+ *
+ *      * MAP_HEAP = 0
+ *      * MAP_STACK = 1
+ *
+ *  These enums are specify the memberType if your pairs are on heap
+ *  create with MAP_HEAP, if on the stack create with MAP_STACK.
  *
  *  For key value pair actually pair struct consist of 2 void*
  *  which is generic data pointer, you can create any key,  value pair.
- *  However for string key and generic value pair there are pre-defined
+ *  However for string key and generic value pair there is pre-defined
  *  macro which is:
  *   
  *   * create_pair_with_strig_key(pair_name, str, val) ==> creates pair with
@@ -61,183 +69,20 @@
  *  
  *  and add with:
  *
- *  mpush_back(&map_name, p1);
+ *  mpush_back(map_name, p1);
  *
  *  For heap map you can create { string key, value } pairs with:
  *
- *  create_pair_with_strig_key(pair_name, str, val);
+ *  create_pair_with_string_key(pair_name, str, val);
  *
  *  and add with:
  *
- *  mpush_back(map_name, pair_name); // Pay attention to
- *  first argument for heap map pass directly map_name(because pointer),
- *  for stack map pass map_name adress with '&map_name' !
+ *  mpush_back(map_name, pair_name);
  *
- *  -----------------------------------------------------------------
- *                           SAMPLE CODE
- *  -----------------------------------------------------------------
- *   
- *  #include "map.h"
- *    typedef struct
- *    {
- *      int a;
- *      char *name;
- *    } block;
- *  
- *    map *
- *    create ()
- *    {
- *      block *q1 = malloc (sizeof (block)); // dynamically allocated pair's value
- *      block *e2 = malloc (sizeof (block)); // dynamically allocated pair's value
- *      block *w3 = malloc (sizeof (block)); // dynamically allocated pair's value
- *      q1->a = 10;
- *      q1->name = strdup("aragorn");
- *      e2->a = 9;
- *      e2->name = strdup("morpheus");
- *      w3->a = 8;
- *      w3->name = strdup("hagrid");
- *      initMap_h (m); // dynamically created map
- *      create_pair_with_strig_key (p1, "the lord of the rings", q1); // creation of pairs
- *      create_pair_with_strig_key (p2, "matrix", e2);                // creation of pairs
- *      create_pair_with_strig_key (p3, "harry potter", w3);          // creation of pairs
- *      mpush_back (m, p1);  // Add pairs to map
- *      mpush_back (m, p2);  // Add pairs to map
- *      mpush_back (m, p3);  // Add pairs to map
- *      return m;   //  return map from function
- *    }
- *  
- *    int
- *    main (int argc, char *argv[])
- *    {
- *    #if 1 // heap example
- *    
- *      map *m = create ();
- *      if (mfind_by_string_key (m, "jango") != NULL)
- *        printf ("FOUND------------>VALUE: {%d, %s}\n",
- *                ((block *)mfind_by_string_key (m, "jango"))->a,
- *                ((block *)mfind_by_string_key (m, "jango"))->name);
- *  
- *      if (mfind_by_string_key (m, "matrix") != NULL)
- *        printf ("FOUND------------>VALUE: {%d, %s}\n",
- *                ((block *)mfind_by_string_key (m, "matrix"))->a,
- *                ((block *)mfind_by_string_key (m, "matrix"))->name);
- *  
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
- *                ((block *)m->pairs[i]->value)->a,
- *                ((block *)m->pairs[i]->value)->name);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *      free(((block*)m->pairs[0]->value)->name);
- *      mdeleteAt (m, 0);
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
- *                ((block *)m->pairs[i]->value)->a,
- *                ((block *)m->pairs[i]->value)->name);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *      free(((block*)m->pairs[m->size-1]->value)->name);
- *      mpop_back (m);
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
- *                ((block *)m->pairs[i]->value)->a,
- *                ((block *)m->pairs[i]->value)->name);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *      free(((block*)m->pairs[0]->value)->name);
- *      mclear (m);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *  
- *      mdeleteAt(m, 321);
- *      mdeleteAt(m, 0);
- *      mpop_back(m);
- *      block* extra_data = malloc (sizeof(block));
- *      extra_data->a = 7;
- *      extra_data->name = strdup("age of empires");
- *      create_pair_with_strig_key (p4, "EA GAMES", extra_data); // creation of pairs
- *      mpush_back(m, p4);
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
- *                ((block *)m->pairs[i]->value)->a,
- *                ((block *)m->pairs[i]->value)->name);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *  
- *      mdeleteAt(m, 243);
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m->pairs[i]->key,
- *                (*(int *)m->pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *      free(((block*)m->pairs[0]->value)->name);
- *      mpop_back(m);
- *      for (ssize_t i = 0; i < m->size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m->pairs[i]->key,
- *                (*(int *)m->pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
- *  
- *  
- *      destroy_map (m);  // DON NOT FORGET TO FREE THE MEMORY AFTER USAGE OF MAP
- *  
- *    #else // stack example
- *  
- *      initMap_s (m);  // stack map initialization
- *      int a = 1998, b = 2001, c = 1980, d = 1982;
- *      mpush_back (&m, &(pair){ "google", &a });
- *      mpush_back (&m, &(pair){ "yahoo", &b });
- *      mpush_back (&m, &(pair){ "linux", &c });
- *      if (mfind_by_string_key (&m, "jango") != NULL)
- *        printf ("FOUND------------>VALUE: {%d}\n",
- *                (*(int *)mfind_by_string_key (&m, "jango")));
- *      if (mfind_by_string_key (&m, "linux") != NULL)
- *        printf ("FOUND------------>VALUE: {%d}\n",
- *                (*(int *)mfind_by_string_key (&m, "linux")));
- *  
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mdeleteAt (&m, 0);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mpop_back (&m);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mclear (&m);
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *  
- *      mpop_back(&m);
- *      mdeleteAt(&m,32);
- *      mdeleteAt(&m,0);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mpush_back(&m, &(pair){ "xerox", &d  });
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mdeleteAt(&m, 243);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *      mpop_back(&m);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *  
- *      destroy_map(&m);
- *      for (ssize_t i = 0; i < m.size; ++i)
- *        printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m.pairs[i]->key,
- *                (*(int *)m.pairs[i]->value));
- *      printf ("\nmap->size: %zu, map->capacity: %zu\n", m.size, m.capacity);
- *  
- *    #endif
- *      return 0;
- *    }
- *
+ *  To make simple there is also a function called
+ *  mpush_back_with_string_key (map* m, const char* keyString, void* d)
+ *  you can push data to map easily with { string, data } pair
+ *  without calling create_pair_with_string_key(pair_name, str, val)
  *
  */
 
@@ -248,21 +93,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define create_pair_with_strig_key(pair_name, str, val)                       \
-  pair *(pair_name) = malloc (sizeof (pair));                                 \
+#define create_pair_with_string_key(pair_name, str, val)                       \
+  pair *(pair_name) = (pair *)malloc (sizeof (pair));                         \
   (pair_name)->key = (void *)strdup ((str));                                  \
   (pair_name)->value = (void *)(val)
 
-#define initMap_s(x)             \
-  map x = { .memberType = 's' }; \
-  init_map(&x)
-
-#define initMap_h(x)            \
-  map* x = malloc(sizeof(map)); \
-  x->memberType = 'h';          \
-  init_map(x)
-
-#define INTERNAL
+typedef enum
+{
+  MAP_HEAP = 0,
+  MAP_STACK
+}MapType;
 
 #ifdef __cplusplus
 extern "C" {
@@ -280,7 +120,7 @@ struct map {
   size_t size;
   size_t capacity;
   pair** pairs;
-  char memberType;
+  char memberType[1];
 };
 
 static void*
@@ -299,7 +139,7 @@ mdeleteAt(map* m, size_t index)
   if (m) {
     if ((index < 0) || (index >= m->size))
       return;
-    if (m->memberType == 's') {
+    if (m->memberType[0] == 's') {
       m->pairs[index]->key = NULL;
       m->pairs[index]->value = NULL;
       m->pairs[index] = NULL;
@@ -330,7 +170,7 @@ mdeleteAt(map* m, size_t index)
 static void
 mclear(map* m)
 {
-  if (m->memberType == 's') {
+  if (m->memberType[0] == 's') {
     free(m->pairs);
   } else {
     for (size_t i = 0; i < m->size; ++i) {
@@ -352,7 +192,7 @@ static void
 destroy_map(map * m)
 {
   mclear(m);
-  if (m->memberType == 'h') {
+  if (m->memberType[0] == 'h') {
     free(m);
     m = NULL;
   }
@@ -365,7 +205,7 @@ mreplace_element (map *m, size_t index, pair *d)
 {
   if (index >= m->size || d == NULL)
     return;
-  if (m->memberType == 's')
+  if (m->memberType[0] == 's')
     m->pairs[index] = d;
   else
   {
@@ -401,18 +241,61 @@ mpush_back(map* m, pair* p)
 }
 
 static void
+mpush_back_with_string_key (map* m, const char* keyString, void* d)
+{
+  create_pair_with_string_key (_p1, keyString, d);
+  if (m->size < m->capacity) {
+    m->pairs[m->size] = _p1;
+    m->size++;
+  } else {
+    if (m->capacity == 0)
+      m->capacity = 2;
+    else
+      m->capacity *= 2;
+    m->pairs = (pair **)realloc(m->pairs, sizeof(pair*) * m->capacity);
+    if (m->pairs == NULL) {
+      puts("memory allocation failed!");
+      return;
+    }
+    m->pairs[m->size] = _p1;
+    m->size++;
+  }
+}
+
+static void
 mpop_back(map* m)
 {
   mdeleteAt(m, m->size - 1);
 }
 
-INTERNAL static void
-init_map(map* m) /* INTERNAL FUNCTION DON'T CALL INSTEAD USE initMap_s(variable_name) or initMap_h(variable_name) MACROS */
+static map*
+init_map(MapType mapType)
 {
-  m->pairs = (pair **)malloc(2 * sizeof(pair*));
+  map* m = NULL;
+  m = (map *)malloc(sizeof(map));
+  if (!m)
+    {
+      puts ("memory allocation failed at map creation!");
+      return NULL;
+    }
+  if (mapType == MAP_HEAP)
+    {
+      memcpy(m->memberType, (char[1]){'h'}, 1);
+    }
+  else if (mapType == MAP_STACK)
+    {
+      m->memberType[0] = 's';
+    }
+  else
+    {
+      puts ("MapType should be either MAP_HEAP or MAP_STACK! Map NOT initialized!");
+      return NULL;
+    }
+  m->pairs = (pair **)calloc(2, sizeof(pair*));
   if(!m->pairs) puts("memory allocation failed!");
   m->size = 0;
   m->capacity = 2;
+  return m;
 }
 
 #ifdef __cplusplus
