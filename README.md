@@ -1,2 +1,3 @@
 # C utility
-Documentation and sample code can be found in  respective header file.
+Documentation can be found in  respective header file.
+Tests are in their respective .c file
