@@ -54,14 +54,17 @@
  *   * map_delete_at(map_variable_name, index) ==> returns nothing, removes
  *     element at specified index.
  *
- *   * mfind_by_string_key(map_variable_name, key_string) ==> returns void*
+ *   * map_find_by_string_key(map_variable_name, key_string) ==> returns void*
  *     if it finds match with the key, returns value of corresponding value,
  *     if not, returns NULL.
  *
- *   * destroy_map(map_name) ==> returns nothing, frees map
+ *   * map_destroy(map_name) ==> returns nothing, frees map
  *
  *   * map_replace_element(map_name, index, pair) ==> returns nothing, replaces
  *     pair at specified index.
+ *
+ *   * map_push_back_with_string_key (Map *m, const char *keyString, void *d) =>
+ *     returns void, creates a entry with a string key
  *
  *  For stack map you can simply create pairs with:
  *
@@ -79,8 +82,10 @@
  *
  *  map_push_back(map_name, pair_name);
  *
- *  To make simple there is also a function called
+ *  To make simple there is also a function called:
+ *
  *  map_push_back_with_string_key (Map* m, const char* keyString, void* d)
+ *
  *  you can push data to map easily with { string, data } pair
  *  without calling create_pair_with_string_key(pair_name, str, val)
  *
@@ -126,7 +131,7 @@ struct Map
 };
 
 static void *
-mfind_by_string_key (Map *m, void *key)
+map_find_by_string_key (Map *m, void *key)
 {
   for (size_t i = 0; i < m->size; ++i)
     if (memcmp ((void *)key, m->pairs[i]->key, strlen ((char *)key)) == 0)
@@ -203,16 +208,11 @@ map_clear (Map *m)
 }
 
 static void
-destroy_map (Map *m)
+map_destroy (Map *m)
 {
   map_clear (m);
-  if (m->memberType[0] == 'h')
-    {
-      free (m);
-      m = NULL;
-    }
-  else
-    return;
+  free (m);
+  m = NULL;
 }
 
 static void

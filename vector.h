@@ -29,7 +29,7 @@
  *
  * These enums are specify the what type of data member it stores,
  * vector itself always on heap therefore you should always call
- * destroy_vector() function, if your data that you will store
+ * vec_destroy() function, if your data that you will store
  * created on heap call Vector* vec = init_vec(VEC_HEAP,.......)
  * otherwise call Vector* vec = init_vec(VEC_STACK,.......)
  *
@@ -67,7 +67,7 @@
  *  * vec_delete_at(vector_name, index) ==> returns nothing, removes data
  *    at specified index.
  *
- *  * destroy_vector(vector_name) ==> returns nothing, frees vector container
+ *  * vec_destroy(vector_name) ==> returns nothing, frees vector container
  *
  *  * vec_replace_element(vector_name, index, data) ==> returns nothing, replaces
  *    data at specified index.
@@ -171,7 +171,7 @@ vec_clear (Vector *v)
 }
 
 static void
-destroy_vector (Vector *v)
+vec_destroy (Vector *v)
 {
   vec_clear (v);
   if (v->memberType[0] == 'h')

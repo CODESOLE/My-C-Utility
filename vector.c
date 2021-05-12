@@ -88,7 +88,7 @@ main (int argc, char *argv[])
        vec_clear(v);
        printf ("SIZE: %zu, CAPACITY: %zu\n", v->size, v->capacity);
 
-       destroy_vector(v);
+       vec_destroy(v);
 
 #else // stack vector
 
@@ -136,7 +136,7 @@ main (int argc, char *argv[])
   vec_push_back (v, &(int){ 50 });
   printf ("SIZE: %zu, CAPACITY: %zu\n", v->size, v->capacity);
 
-  destroy_vector (v);
+  vec_destroy (v);
 
 #endif
 

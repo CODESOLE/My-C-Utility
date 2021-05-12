@@ -33,20 +33,20 @@ main (int argc, char *argv[])
 #if 1 // heap example
 
  Map *m = create ();
- if (mfind_by_string_key (m, "jango") != NULL)
+ if (map_find_by_string_key (m, "jango") != NULL)
    printf ("FOUND------------>VALUE: {%d, %s}\n",
-           ((block *)mfind_by_string_key (m, "jango"))->a,
-           ((block *)mfind_by_string_key (m, "jango"))->name);
+           ((block *)map_find_by_string_key (m, "jango"))->a,
+           ((block *)map_find_by_string_key (m, "jango"))->name);
 
- if (mfind_by_string_key (m, "The lord Of The Rings and fellowship of the ring") != NULL)
+ if (map_find_by_string_key (m, "The lord Of The Rings and fellowship of the ring") != NULL)
    printf ("FOUND------------>VALUE: {%d, %s}\n",
-           ((block *)mfind_by_string_key (m, "jango"))->a,
-           ((block *)mfind_by_string_key (m, "jango"))->name);
+           ((block *)map_find_by_string_key (m, "jango"))->a,
+           ((block *)map_find_by_string_key (m, "jango"))->name);
 
- if (mfind_by_string_key (m, "matrix") != NULL)
+ if (map_find_by_string_key (m, "matrix") != NULL)
    printf ("FOUND------------>VALUE: {%d, %s}\n",
-           ((block *)mfind_by_string_key (m, "matrix"))->a,
-           ((block *)mfind_by_string_key (m, "matrix"))->name);
+           ((block *)map_find_by_string_key (m, "matrix"))->a,
+           ((block *)map_find_by_string_key (m, "matrix"))->name);
 
  for (size_t i = 0; i < m->size; ++i)
    printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
@@ -78,6 +78,7 @@ main (int argc, char *argv[])
  extra_data->a = 7;
  extra_data->name = strdup("age of empires");
  create_pair_with_string_key (p4, "EA GAMES", extra_data); // creation of pairs
+ map_push_back_with_string_key(m, "Ubisoft", extra_data);
  map_push_back(m, p4);
  for (size_t i = 0; i < m->size; ++i)
    printf ("KEY: %s, VALUE: b1{%d, %s}\n", (char *)m->pairs[i]->key,
@@ -98,7 +99,7 @@ main (int argc, char *argv[])
  printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
 
 
- destroy_map (m);  // DON NOT FORGET TO FREE THE MEMORY AFTER USAGE OF MAP
+ map_destroy (m);  // DON NOT FORGET TO FREE THE MEMORY AFTER USAGE OF MAP
 
 #else // stack example
 
@@ -109,12 +110,12 @@ main (int argc, char *argv[])
  map_push_back (m, &(pair){ "google", &a });
  map_push_back (m, &(pair){ "yahoo", &b });
  map_push_back (m, &(pair){ "linux", &c });
- if (mfind_by_string_key (m, "jango") != NULL)
+ if (map_find_by_string_key (m, "jango") != NULL)
    printf ("FOUND------------>VALUE: {%d}\n",
-           (*(int *)mfind_by_string_key (m, "jango")));
- if (mfind_by_string_key (m, "linux") != NULL)
+           (*(int *)map_find_by_string_key (m, "jango")));
+ if (map_find_by_string_key (m, "linux") != NULL)
    printf ("FOUND------------>VALUE: {%d}\n",
-           (*(int *)mfind_by_string_key (m, "linux")));
+           (*(int *)map_find_by_string_key (m, "linux")));
 
  for (size_t i = 0; i < m->size; ++i)
    printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m->pairs[i]->key,
@@ -156,7 +157,7 @@ main (int argc, char *argv[])
            (*(int *)m->pairs[i]->value));
  printf ("\nmap->size: %zu, map->capacity: %zu\n", m->size, m->capacity);
 
- destroy_map(m);
+ map_destroy(m);
  for (size_t i = 0; i < m->size; ++i)
    printf ("KEY: %s, VALUE: b1{%d}\n", (char *)m->pairs[i]->key,
            (*(int *)m->pairs[i]->value));
